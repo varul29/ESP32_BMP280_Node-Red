@@ -1,4 +1,4 @@
-#include<Wire.h>
+#include <Wire.h>
 #include <PubSubClient.h>
 #include <WiFi.h>
 
@@ -6,8 +6,8 @@
 #define Addr 0x76
 
 //Wifi Credentials
-#define wifi_ssid "SSID"
-#define wifi_password "Password"
+#define wifi_ssid "DcubeAirtel"
+#define wifi_password "D@Airtel190"
 
 //Define MQTT server and topics
 #define mqtt_server "iot.eclipse.org"
@@ -23,6 +23,11 @@ PubSubClient client;
 volatile float tempc, tempf, presr, altm, altf;
 void setup()
 {
+    Wire.begin(21,22);
+    Serial.begin(115200);
+    Serial.println("RX Pin --->"+RX);
+    Serial.println("TX Pin --->"+TX);
+    setup_wifi();
     client.setServer(mqtt_server, 1883);
     client.setClient(espClient);
 }
@@ -53,7 +58,7 @@ void setup()
     // Loop until we're reconnected
     while (!client.connected()) {
       Serial.print("Attempting MQTT connection...");
-        if (client.connect("ESP8266Client")) {
+        if (client.connect("ESP32Client")) {
         Serial.println("connected");
       } 
       else {
@@ -71,6 +76,10 @@ void setup()
     bmp280();
     delay(100);
 
+    if (!client.connected()) {
+    reconnect();
+    }
+    
     //Mentioned below directly executed in String url
     
     Serial.print("C Temp: ");
